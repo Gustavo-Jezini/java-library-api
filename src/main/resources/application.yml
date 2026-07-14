@@ -1,0 +1,15 @@
+spring:
+  application.name:
+    libraryapi
+  datasource:
+    url: jdbc:postgresql://localhost:5432/library
+    username: postgres
+    password: postgres
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    show-sql: true
+    properties:
+      hibernate.format_sql: true
+    hibernate:
+      ddl-auto: update # Cria e mantem a aplicação
+      # Existem outras opções como: none, e create-drop ( essa derruba e cria sempre que o app é iniciado)
