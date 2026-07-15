@@ -7,6 +7,7 @@ import io.github.com.libraryapi.service.AutorService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
@@ -24,6 +25,7 @@ public class AutorController implements GenericController {
     private final AutorMapper mapper;
 
     @GetMapping("{id}")
+    @PreAuthorize("hasAnyRole('OPERADOR', 'GERENTE')")
     public ResponseEntity<AutorDTO> obterDetalhes(@PathVariable("id") String id) {
       var idAutor = UUID.fromString(id);
 
@@ -36,6 +38,7 @@ public class AutorController implements GenericController {
     };
 
     @GetMapping
+    @PreAuthorize("hasAnyRole('GERENTE')")
     public ResponseEntity<List<AutorDTO>> pesquisa(
             @RequestParam(value = "nome", required = false) String nome,
             @RequestParam(value = "nacionalidade", required = false) String nacionalidade
@@ -51,6 +54,7 @@ public class AutorController implements GenericController {
     }
 
     @PostMapping
+    @PreAuthorize("hasAnyRole('GERENTE')")
     public ResponseEntity<Object> salvar(@RequestBody @Valid AutorDTO dto) {
         Autor autor = mapper.toEntity(dto);
         service.salvar(autor);
@@ -61,6 +65,7 @@ public class AutorController implements GenericController {
     }
 
     @PutMapping("{id}")
+    @PreAuthorize("hasAnyRole('GERENTE')")
     public ResponseEntity<Object> atualizar(
             @PathVariable String id,
             @RequestBody @Valid  AutorDTO autorDTO
@@ -83,6 +88,7 @@ public class AutorController implements GenericController {
     }
 
     @DeleteMapping("{id}")
+    @PreAuthorize("hasAnyRole('GERENTE')")
     public ResponseEntity<Object> deletarAutor(@PathVariable String id) {
         var autorId = UUID.fromString(id);
         Optional<Autor> autorOptional = service.obterPorId(autorId);
