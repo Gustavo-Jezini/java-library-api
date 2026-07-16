@@ -3,11 +3,15 @@ package io.github.com.libraryapi.controller;
 import io.github.com.libraryapi.controller.dto.AutorDTO;
 import io.github.com.libraryapi.controller.mappers.AutorMapper;
 import io.github.com.libraryapi.model.Autor;
+import io.github.com.libraryapi.model.Usuario;
 import io.github.com.libraryapi.service.AutorService;
+import io.github.com.libraryapi.service.UsuarioService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
@@ -22,6 +26,7 @@ import java.util.stream.Collectors;
 public class AutorController implements GenericController {
 
     private final AutorService service;
+    private final UsuarioService usuarioService;
     private final AutorMapper mapper;
 
     @GetMapping("{id}")
@@ -55,8 +60,13 @@ public class AutorController implements GenericController {
 
     @PostMapping
     @PreAuthorize("hasAnyRole('GERENTE')")
-    public ResponseEntity<Object> salvar(@RequestBody @Valid AutorDTO dto) {
+    public ResponseEntity<Object> salvar(@RequestBody @Valid AutorDTO dto,
+                                         Authentication authentication) {
+        UserDetails usuarioAutenticado = (UserDetails) authentication.getPrincipal();
+        Usuario usuario = usuarioService.obterPorLogin(usuarioAutenticado.getUsername());
+
         Autor autor = mapper.toEntity(dto);
+        autor.setIdUsuario(usuario.getId());
         service.salvar(autor);
 
         URI location = gerarHeaderLocation(autor.getId());
