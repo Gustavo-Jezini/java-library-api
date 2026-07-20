@@ -4,6 +4,7 @@ import io.github.com.libraryapi.controller.dto.AutorDTO;
 import io.github.com.libraryapi.controller.mappers.AutorMapper;
 import io.github.com.libraryapi.model.Autor;
 import io.github.com.libraryapi.model.Usuario;
+import io.github.com.libraryapi.security.SecurityService;
 import io.github.com.libraryapi.service.AutorService;
 import io.github.com.libraryapi.service.UsuarioService;
 import jakarta.validation.Valid;
@@ -66,7 +67,7 @@ public class AutorController implements GenericController {
         Usuario usuario = usuarioService.obterPorLogin(usuarioAutenticado.getUsername());
 
         Autor autor = mapper.toEntity(dto);
-        autor.setIdUsuario(usuario.getId());
+        autor.setUsuario(usuario);
         service.salvar(autor);
 
         URI location = gerarHeaderLocation(autor.getId());

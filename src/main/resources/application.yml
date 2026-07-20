@@ -13,3 +13,10 @@ spring:
     hibernate:
       ddl-auto: update # Cria e mantem a aplicação
       # Existem outras opções como: none, e create-drop ( essa derruba e cria sempre que o app é iniciado)
+  security:
+    oauth2:
+      client:
+        registration:
+          google:
+            client-id: ${GOOGLE_CLIENT_ID}
+            client-secret: ${GOOGLE_CLIENT_SECRET}
