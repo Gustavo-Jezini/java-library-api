@@ -2,6 +2,7 @@ package io.github.com.libraryapi.model;
 
 import io.hypersistence.utils.hibernate.type.array.ListArrayType;
 import jakarta.persistence.*;
+import jakarta.validation.Valid;
 import lombok.Data;
 import org.hibernate.annotations.Type;
 
@@ -18,6 +19,10 @@ public class Usuario {
     private UUID id;
     @Column
     private String login;
+
+    @Column
+    @Valid
+    private String email;
 
     @Column
     private String senha;
