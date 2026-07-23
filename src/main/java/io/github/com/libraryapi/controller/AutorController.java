@@ -7,6 +7,10 @@ import io.github.com.libraryapi.model.Usuario;
 import io.github.com.libraryapi.security.SecurityService;
 import io.github.com.libraryapi.service.AutorService;
 import io.github.com.libraryapi.service.UsuarioService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -24,6 +28,7 @@ import java.util.stream.Collectors;
 @RestController
 @RequestMapping("autores")
 @RequiredArgsConstructor
+@Tag(name = "Autores")
 public class AutorController implements GenericController {
 
     private final AutorService service;
@@ -32,6 +37,11 @@ public class AutorController implements GenericController {
 
     @GetMapping("{id}")
     @PreAuthorize("hasAnyRole('OPERADOR', 'GERENTE')")
+    @Operation(summary = "Obter detalhes", description = "Retorna os dados de um autor cadastrado, a partir do seu id")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Autor encontrado"),
+            @ApiResponse(responseCode = "404", description = "Autor não encontrado")
+    })
     public ResponseEntity<AutorDTO> obterDetalhes(@PathVariable("id") String id) {
       var idAutor = UUID.fromString(id);
 
@@ -45,6 +55,10 @@ public class AutorController implements GenericController {
 
     @GetMapping
     @PreAuthorize("hasAnyRole('GERENTE')")
+    @Operation(summary = "Pesquisar", description = "Realiza busca de autores por nome e/ou nacionalidade")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Busca realizada com sucesso")
+    })
     public ResponseEntity<List<AutorDTO>> pesquisa(
             @RequestParam(value = "nome", required = false) String nome,
             @RequestParam(value = "nacionalidade", required = false) String nacionalidade
@@ -61,6 +75,12 @@ public class AutorController implements GenericController {
 
     @PostMapping
     @PreAuthorize("hasAnyRole('GERENTE')")
+    @Operation(summary = "Salvar", description = "cadastrar novo autor")
+    @ApiResponses({
+            @ApiResponse(responseCode = "201", description = "Cadastrado com sucesso."),
+            @ApiResponse(responseCode = "422", description = "Erro de validação"),
+            @ApiResponse(responseCode = "409", description = "Autor já cadastrado.")
+    })
     public ResponseEntity<Object> salvar(@RequestBody @Valid AutorDTO dto,
                                          Authentication authentication) {
         UserDetails usuarioAutenticado = (UserDetails) authentication.getPrincipal();
@@ -77,6 +97,12 @@ public class AutorController implements GenericController {
 
     @PutMapping("{id}")
     @PreAuthorize("hasAnyRole('GERENTE')")
+    @Operation(summary = "Atualizar", description = "Atualiza os dados de um autor cadastrado")
+    @ApiResponses({
+            @ApiResponse(responseCode = "202", description = "Atualizado com sucesso"),
+            @ApiResponse(responseCode = "404", description = "Autor não encontrado"),
+            @ApiResponse(responseCode = "422", description = "Erro de validação")
+    })
     public ResponseEntity<Object> atualizar(
             @PathVariable String id,
             @RequestBody @Valid  AutorDTO autorDTO
@@ -100,6 +126,12 @@ public class AutorController implements GenericController {
 
     @DeleteMapping("{id}")
     @PreAuthorize("hasAnyRole('GERENTE')")
+    @Operation(summary = "Deletar", description = "Deleta um autor cadastrado, desde que não possua livros vinculados")
+    @ApiResponses({
+            @ApiResponse(responseCode = "204", description = "Deletado com sucesso"),
+            @ApiResponse(responseCode = "404", description = "Autor não encontrado"),
+            @ApiResponse(responseCode = "400", description = "Autor possui livros cadastrados")
+    })
     public ResponseEntity<Object> deletarAutor(@PathVariable String id) {
         var autorId = UUID.fromString(id);
         Optional<Autor> autorOptional = service.obterPorId(autorId);

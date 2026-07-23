@@ -1,9 +1,11 @@
 package io.github.com.libraryapi.controller.dto;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import org.springframework.http.HttpStatus;
 
 import java.util.List;
 
+@Schema(name = "ErroResposta")
 public record ErroRespostaDTO(int status, String mensagem, List<ErroCampoDTO> erros) {
 
     public static ErroRespostaDTO respostaPadrao(String mensagem) {
