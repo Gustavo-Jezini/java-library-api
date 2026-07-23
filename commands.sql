@@ -9,6 +9,14 @@ create table autor(
       id_usuario uuid references usuario(id)
 );
 
+CREATE TABLE client(
+   id uuid not null primary key,
+    client_id varchar(150) not null,
+    client_secret varchar(400) not null,
+    redirect_uri varchar(200) not null,
+    scope varchar(50)
+)
+
 create table livro(
       id uuid not null primary key,
       isbn varchar(20) not null,
